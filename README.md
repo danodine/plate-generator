@@ -1,12 +1,39 @@
-# React + Vite
+# Plate Generator (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small tool to configure multi-panel “plates” that share one image (motif). You set each plate’s width/height, and the preview shows how the image will look across all plates. State is saved in the browser.
 
-Currently, two official plugins are available:
+## What it does
+- Visual preview with realistic proportions (no distortion)
+- Shared motif mapped across all plates
+- Automatic mirroring for very wide layouts (total width > 300 cm)
+- Add, remove (except last), and reorder plates (drag & drop or arrows)
+- Inputs accept `.` or `,` as decimals
+- Optional: change the motif via URL; export preview as PNG
+- Units toggle: centimeters / inches (internally stored as cm)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Using the app
+- Set Breite (width) and Höhe (height) for each plate.
+- Ranges: Width 20–300 cm, Height 30–128 cm.
+- Type decimals with . or ,; values clamp/validate on blur.
+- Click Rückenwand hinzufügen + to add a plate (max 10).
+- Reorder with drag & drop (or the ◀ ▶ buttons).
+- Remove a plate with the red − (at least one plate must remain).
+- (Optional) Enter a Motif Image URL.
+- (Optional) Toggle cm / in in the header; the UI converts values.
+- (Optional) Export PNG from the preview header.
 
-## Expanding the ESLint configuration
+## Notes:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+PNG export of remote images requires CORS; otherwise upload/host with permissive headers.
+
+State is persisted to localStorage under the key plate-generator.
+Reset via browser console:
+
+## Quick start
+```bash
+npm install
+npm run dev
+# Production:
+npm run build
+npm run preview
+
