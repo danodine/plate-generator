@@ -19,7 +19,6 @@ export function computeCover(imgW, imgH, canvasW, canvasH) {
   return { scaledW, scaledH, offsetX, offsetY, scale }
 }
 
-// Mirror-extend image horizontally to reach a target width; returns data URL.
 export function mirrorExtendHorizontal(img, targetWidth, maxWidth = 8192) {
   const unit = img.width
   const layers = Math.min(Math.ceil(targetWidth / unit), Math.floor(maxWidth / unit))

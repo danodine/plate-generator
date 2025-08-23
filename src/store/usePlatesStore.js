@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v))
 const uuid = () => (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()))
+const CM_PER_IN = 2.54
 
 const defaultPlates = [{ id: uuid(), widthCm: 120, heightCm: 60 }]
 
@@ -10,14 +11,18 @@ export const usePlatesStore = create(
   persist(
     (set, get) => ({
       plates: defaultPlates,
-      // keep your remote URL (optional task)
+
       motifUrl:
         'https://rueckwand24.com/cdn/shop/files/Kuechenrueckwand-Kuechenrueckwand-Gruene-frische-Kraeuter-KR-000018-HB.jpg?v=1695288356&width=1200',
-
-      mirrorEnabled: false, // default OFF to avoid the mirrored seam in the mock
-
       setMotifUrl: (url) => set({ motifUrl: url || get().motifUrl }),
+
+      mirrorEnabled: false,
       setMirrorEnabled: (v) => set({ mirrorEnabled: !!v }),
+
+      unit: 'cm',
+      setUnit: (u) => set({ unit: u === 'in' ? 'in' : 'cm' }),
+      cmToUnit: (cm) => (get().unit === 'in' ? cm / CM_PER_IN : cm),
+      unitToCm: (val) => (get().unit === 'in' ? val * CM_PER_IN : val),
 
       addPlate: (plate = {}) =>
         set((state) => {
@@ -25,12 +30,11 @@ export const usePlatesStore = create(
           const p = {
             id: uuid(),
             widthCm: clamp(Math.round((plate.widthCm ?? 100) * 10) / 10, 20, 300),
-            heightCm: clamp(Math.round((plate.heightCm ?? 60) * 10) / 10, 30, 120),
+            heightCm: clamp(Math.round((plate.heightCm ?? 60) * 10) / 10, 30, 128),
           }
           return { plates: [...state.plates, p] }
         }),
 
-      // per-plate delete
       removeById: (id) =>
         set((state) => {
           if (state.plates.length <= 1) return state
@@ -38,16 +42,10 @@ export const usePlatesStore = create(
           return next.length ? { plates: next } : state
         }),
 
-      removeLast: () =>
-        set((state) => (state.plates.length <= 1 ? state : { plates: state.plates.slice(0, -1) })),
-
-      duplicateLast: () =>
-        set((state) => {
-          if (state.plates.length >= 10) return state
-          const last = state.plates[state.plates.length - 1]
-          const copy = { ...last, id: uuid() }
-          return { plates: [...state.plates, copy] }
-        }),
+      updatePlate: (id, patch) =>
+        set((state) => ({
+          plates: state.plates.map((p) => (p.id === id ? { ...p, ...patch } : p)),
+        })),
 
       movePlate: (from, to) =>
         set((state) => {
@@ -57,11 +55,6 @@ export const usePlatesStore = create(
           arr.splice(to, 0, item)
           return { plates: arr }
         }),
-
-      updatePlate: (id, patch) =>
-        set((state) => ({
-          plates: state.plates.map((p) => (p.id === id ? { ...p, ...patch } : p)),
-        })),
 
       reset: () => ({ plates: defaultPlates }),
     }),
