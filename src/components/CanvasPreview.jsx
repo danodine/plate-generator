@@ -29,42 +29,46 @@ export default function CanvasPreview({ plates, motifUrl }) {
     return { totalW, maxH }
   }, [plates])
 
-  // Load and possibly mirror-extend the image to fit wide panoramas
   useEffect(() => {
-    let isMounted = true
-    async function run() {
-      try {
-        const img = await loadImage(motifUrl)
-        const virtualAspect = virtual.totalW / Math.max(1, virtual.maxH)
-        const imgAspect = img.width / img.height
-        if (virtualAspect > imgAspect * 1.2) {
-          const neededWidth = Math.min(Math.ceil(img.height * virtualAspect), 8192)
-          const dataUrl = mirrorExtendHorizontal(img, neededWidth)
-          if (!isMounted) return
-          const extended = await loadImage(dataUrl)
-          if (!isMounted) return
-          setImgInfo({ url: dataUrl, w: extended.width, h: extended.height })
-        } else {
-          if (!isMounted) return
-          setImgInfo({ url: motifUrl, w: img.width, h: img.height })
-        }
-      } catch (e) {
-        console.error('Failed to load motif', e)
-        setImgInfo(null)
+  let isMounted = true
+  async function run() {
+    try {
+      const img = await loadImage(motifUrl)
+
+      // Spec rule: mirror if total plate width > 300 cm
+      const shouldMirror = virtual.totalW > 300
+
+      if (shouldMirror) {
+        // Need enough pixel width to cover the virtual canvas aspect
+        // required width in px = img.height * (canvasW / canvasH)
+        const neededWidth = Math.min(
+          Math.ceil(img.height * (virtual.totalW / Math.max(1, virtual.maxH))),
+          8192
+        )
+        const dataUrl = mirrorExtendHorizontal(img, neededWidth)
+        if (!isMounted) return
+        const extended = await loadImage(dataUrl)
+        if (!isMounted) return
+        setImgInfo({ url: dataUrl, w: extended.width, h: extended.height })
+      } else {
+        if (!isMounted) return
+        setImgInfo({ url: motifUrl, w: img.width, h: img.height })
       }
+    } catch (e) {
+      console.error('Failed to load motif', e)
+      setImgInfo(null)
     }
-    run()
-    return () => { isMounted = false }
-  }, [motifUrl, virtual.totalW, virtual.maxH])
+  }
+  run()
+  return () => { isMounted = false }
+}, [motifUrl, virtual.totalW, virtual.maxH])
+
 
   const preview = useMemo(() => {
     const pad = 12
     const availW = Math.max(0, size.width - pad * 2)
     const availH = Math.max(0, size.height - pad * 2)
-    const s = Math.min(
-      availW / Math.max(1, virtual.totalW),
-      availH / Math.max(1, virtual.maxH)
-    )
+    const s = Math.min(availW / Math.max(1, virtual.totalW), availH / Math.max(1, virtual.maxH))
     return { scale: isFinite(s) ? s : 1 }
   }, [size, virtual])
 
@@ -80,20 +84,21 @@ export default function CanvasPreview({ plates, motifUrl }) {
   const bg = useMemo(() => {
     if (!imgInfo) return null
     const cover = computeCover(imgInfo.w, imgInfo.h, virtual.totalW, virtual.maxH)
-    const scalePx = preview.scale
+    const s = preview.scale
     return {
-      sizeW: cover.scaledW * scalePx,
-      sizeH: cover.scaledH * scalePx,
-      posX: (xCm) => -(xCm - cover.offsetX) * scalePx,
-      posY: (yCm) => -(yCm - cover.offsetY) * scalePx,
+      sizeW: cover.scaledW * s,
+      sizeH: cover.scaledH * s,
+      // ✅ add offsets to align a single big background behind all plates
+      posX: (xCm) => -(xCm + cover.offsetX) * s,
+      posY: (yCm) => -(yCm + cover.offsetY) * s,
       url: imgInfo.url,
     }
   }, [imgInfo, virtual.totalW, virtual.maxH, preview.scale])
 
   return (
     <div className="canvas-wrap panel">
-      <h2>Visual Preview</h2>
-      <div className="canvas" ref={ref}>
+      <div className="preview-title">Visual Preview</div>
+      <div className="canvas gradient-card" ref={ref}>
         <div
           className="canvas-inner"
           style={{ width: virtual.totalW * preview.scale, height: virtual.maxH * preview.scale }}
@@ -110,6 +115,7 @@ export default function CanvasPreview({ plates, motifUrl }) {
                   left: off.x0 * preview.scale,
                   width,
                   height,
+                  boxShadow: '0 8px 22px rgba(0,0,0,0.18)'
                 }}
               >
                 <div className="legend">{p.widthCm}×{p.heightCm} cm</div>
@@ -120,7 +126,7 @@ export default function CanvasPreview({ plates, motifUrl }) {
                     backgroundImage: `url(${bg.url})`,
                     backgroundSize: `${bg.sizeW}px ${bg.sizeH}px`,
                     backgroundPosition: `${bg.posX(off.x0)}px ${bg.posY(off.y0)}px`,
-                    backgroundRepeat: 'no-repeat'
+                    backgroundRepeat: 'no-repeat',
                   }}
                 />
               </div>
