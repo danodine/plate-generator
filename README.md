@@ -4,7 +4,7 @@ A small tool to configure multi-panel “plates” that share one image (motif).
 
 ## Live Demo
 You can try the app here: [Plate Generator on Vercel](https://plate-generator-iota.vercel.app/)
-[![Watch the demo](https://img.youtube.com/vi/B47DXnTGUGM/0.jpg)](https://youtu.be/B47DXnTGUGM)
+You can whatch a live demo here: [![Watch the demo](https://img.youtube.com/vi/B47DXnTGUGM/0.jpg)](https://youtu.be/B47DXnTGUGM)
 
 
 ## What it does
