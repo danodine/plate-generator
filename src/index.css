@@ -14,7 +14,6 @@ body {
   color: #222;
 }
 
-
 /* ==========================================================================
    2) App Layout
    ========================================================================== */
@@ -26,7 +25,6 @@ body {
   height: 100vh;
   padding: 16px;
 }
-
 
 /* ==========================================================================
    3) Panels & Headings
@@ -45,7 +43,6 @@ body {
   font-size: 26px;
   margin-bottom: 10px;
 }
-
 
 /* ==========================================================================
    4) Buttons & Actions
@@ -85,7 +82,7 @@ body {
 .del-pill {
   width: 32px;
   height: 32px;
-  border-radius: 9999px;
+  border-radius: 50%;
   border: 1px solid #ffc7c7;
   background: #ffecec;
   color: #e23b3b;
@@ -111,7 +108,6 @@ body {
   cursor: pointer;
 }
 
-
 /* ==========================================================================
    5) Text & Helper
    ========================================================================== */
@@ -127,7 +123,6 @@ body {
   margin-top: 2px;
   text-align: center;
 }
-
 
 /* ==========================================================================
    6) Simple Inputs (URL field)
@@ -156,7 +151,6 @@ body {
   height: 36px;
 }
 
-
 /* ==========================================================================
    7) Dimension Inputs (big inputs)
    ========================================================================== */
@@ -180,10 +174,10 @@ body {
 }
 
 .dims-row {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
   gap: 18px;
-  align-items: end;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .big-input-wrap {
@@ -232,7 +226,6 @@ body {
   font-weight: 600;
 }
 
-
 /* ==========================================================================
    8) Unit Toggle (cm / in)
    ========================================================================== */
@@ -267,7 +260,6 @@ body {
   background: #0ea15f;
   color: #fff;
 }
-
 
 /* ==========================================================================
    9) Canvas Preview
@@ -317,7 +309,6 @@ body {
   transition: left 180ms ease, width 180ms ease, height 180ms ease;
 }
 
-
 /* ==========================================================================
    10) Plate Cards
    ========================================================================== */
@@ -343,19 +334,18 @@ body {
 }
 
 .badge {
-  width: 28px;
-  height: 28px;
+  width: 50px;
+  height: 50px;
   border-radius: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 400;
   background: #111;
   color: #fff;
-  font-size: 14px;
+  font-size: 22px;
   border: 2px solid #111;
 }
-
 
 /* ==========================================================================
    11) Animations (cards)
@@ -366,10 +356,15 @@ body {
 }
 
 @keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
 
 /* ==========================================================================
    12) Responsive
@@ -384,29 +379,41 @@ body {
 }
 
 @media (max-width: 600px) {
-  .big-input { font-size: 24px; }
-
-  .controls-root .headline { font-size: 22px; }
-
-  .plate-card { padding: 12px; }
-
-  .dims-row {
-    grid-template-columns: 1fr;
-    gap: 10px;
+  .big-input {
+    font-size: 24px;
   }
 
-  .times { display: none; }
+  .controls-root .headline {
+    font-size: 22px;
+  }
+
+  .plate-card {
+    padding: 12px;
+  }
+
+  .times {
+    display: none;
+  }
 
   .badge {
-    width: 24px;
-    height: 24px;
+    width: 50px;
+    height: 25px;
     font-size: 12px;
+    border-radius: 6px;
+    position: relative;
+    left: -5%;
+    top: -95px;
   }
 
-  .del-pill,
+  .del-pill {
+    width: 60px;
+    height: 25px;
+    position: relative;
+    left: 5%;
+    top: -95px;
+  }
   .ghost-nav {
-    width: 28px;
-    height: 26px;
-    border-radius: 8px;
+    width: 60px;
+    height: 25px;
   }
 }
