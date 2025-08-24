@@ -3,8 +3,9 @@
 A small tool to configure multi-panel “plates” that share one image (motif). You set each plate’s width/height, and the preview shows how the image will look across all plates. State is saved in the browser.
 
 ## Live Demo
-You can try the app here: [Plate Generator on Vercel](https://plate-generator-iota.vercel.app/)
-You can whatch a live demo here: 
+- You can try the app here: [Plate Generator on Vercel](https://plate-generator-iota.vercel.app/)
+
+- You can whatch a live demo here: 
 [![Watch the demo](https://img.youtube.com/vi/B47DXnTGUGM/0.jpg)](https://youtu.be/B47DXnTGUGM)
 
 
